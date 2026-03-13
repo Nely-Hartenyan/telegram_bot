@@ -1,4 +1,4 @@
-name: Send Daily Deep Idea
+name: Send Daily Deep Idea Bot
 
 on:
   schedule:
