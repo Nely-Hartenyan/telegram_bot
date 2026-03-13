@@ -4,16 +4,14 @@ const {
     TELEGRAM_BOT_TOKEN,
     TELEGRAM_CHAT_ID,
     OPENAI_API_KEY,
-    OPENAI_MODEL = "gpt-5-mini",
+    OPENAI_MODEL = "gpt-5.1",
 } = process.env;
 
 if (!TELEGRAM_BOT_TOKEN || !TELEGRAM_CHAT_ID || !OPENAI_API_KEY) {
     throw new Error("Missing TELEGRAM_BOT_TOKEN / TELEGRAM_CHAT_ID / OPENAI_API_KEY");
 }
 
-const openai = new OpenAI({
-    apiKey: OPENAI_API_KEY,
-});
+const openai = new OpenAI({ apiKey: OPENAI_API_KEY });
 
 async function sendTelegramMessage(text) {
     const res = await fetch(`https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage`, {
@@ -60,7 +58,7 @@ Write one "Daily Deep Idea" in Russian for Telegram.
 
 Requirements:
 - 5 to 7 short lines
-- include: title, explanation, simple example, takeaway
+- include title, explanation, simple example, takeaway
 - simple language
 - start with 🧠
 - no markdown
@@ -69,13 +67,9 @@ Requirements:
     const response = await openai.responses.create({
         model: OPENAI_MODEL,
         input: prompt,
-        reasoning: {
-            effort: "low"
-        },
-        max_output_tokens: 300,
-        text: {
-            verbosity: "low"
-        }
+        reasoning: { effort: "none" },
+        max_output_tokens: 250,
+        text: { verbosity: "low" }
     });
 
     const text = extractText(response);

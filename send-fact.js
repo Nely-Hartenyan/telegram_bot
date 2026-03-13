@@ -4,7 +4,7 @@ const {
     TELEGRAM_BOT_TOKEN,
     TELEGRAM_CHAT_ID,
     OPENAI_API_KEY,
-    OPENAI_MODEL = "gpt-5-mini",
+    OPENAI_MODEL = "gpt-5.1",
 } = process.env;
 
 if (!TELEGRAM_BOT_TOKEN || !TELEGRAM_CHAT_ID || !OPENAI_API_KEY) {
@@ -91,13 +91,9 @@ Rules:
     const response = await openai.responses.create({
         model: OPENAI_MODEL,
         input: prompt,
-        reasoning: {
-            effort: "low"
-        },
-        max_output_tokens: 220,
-        text: {
-            verbosity: "low"
-        }
+        reasoning: { effort: "none" },
+        max_output_tokens: 180,
+        text: { verbosity: "low" }
     });
 
     const text = extractText(response);
