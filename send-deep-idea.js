@@ -60,11 +60,7 @@ Write one "Daily Deep Idea" in Russian for Telegram.
 
 Requirements:
 - 5 to 7 short lines
-- include:
-  title
-  explanation
-  simple example
-  takeaway
+- include: title, explanation, simple example, takeaway
 - simple language
 - start with 🧠
 - no markdown
@@ -73,7 +69,13 @@ Requirements:
     const response = await openai.responses.create({
         model: OPENAI_MODEL,
         input: prompt,
-        max_output_tokens: 200,
+        reasoning: {
+            effort: "low"
+        },
+        max_output_tokens: 300,
+        text: {
+            verbosity: "low"
+        }
     });
 
     const text = extractText(response);
@@ -84,7 +86,6 @@ Requirements:
     }
 
     await sendTelegramMessage(text);
-
     console.log("Deep idea sent");
 }
 
