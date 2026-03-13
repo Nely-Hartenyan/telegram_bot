@@ -1,0 +1,14 @@
+{
+  "name": "telegram-knowledge-bot",
+  "version": "1.0.0",
+  "main": "send-fact.js",
+  "type": "module",
+  "scripts": {
+    "fact": "node send-fact.js",
+    "deep": "node send-deep-idea.js"
+  },
+  "dependencies": {
+    "dotenv": "^17.3.1",
+    "openai": "^6.27.0"
+  }
+}
