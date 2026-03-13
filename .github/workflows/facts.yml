@@ -2,7 +2,7 @@ name: Send Facts
 
 on:
   schedule:
-    - cron: "0,30 5-17 * * *"
+    - cron: "*/5 * * * *"
   workflow_dispatch:
 
 jobs:
