@@ -32,31 +32,77 @@ async function sendTelegramMessage(text) {
     }
 }
 
+function randomTopic() {
+    const topics = [
+        "programming",
+        "AI",
+        "psychology",
+        "philosophy",
+        "science",
+        "history",
+        "space",
+        "math",
+        "physics",
+        "biology",
+        "mental models",
+        "logic"
+    ];
+
+    return topics[Math.floor(Math.random() * topics.length)];
+}
+
+function extractText(response) {
+    if (response.output_text && response.output_text.trim()) {
+        return response.output_text.trim();
+    }
+
+    const parts = [];
+
+    for (const item of response.output || []) {
+        if (item.type === "message") {
+            for (const content of item.content || []) {
+                if (content.type === "output_text" && content.text) {
+                    parts.push(content.text);
+                }
+            }
+        }
+    }
+
+    return parts.join("\n").trim();
+}
+
 async function main() {
+    const topic = randomTopic();
+
     const prompt = `
-Write 1 Daily Deep Idea in Russian for Telegram.
+Write exactly 1 short interesting fact in Russian for Telegram.
+
+Topic: ${topic}
 
 Rules:
-- 5 to 7 short lines
-- simple but smart
-- include title, explanation, example, takeaway
-- start with 🧠
+- 3 to 5 short lines
+- accurate
+- simple
+- start with emoji
+- end with: Идея: ...
+- no markdown
 `.trim();
 
     const response = await openai.responses.create({
         model: OPENAI_MODEL,
         input: prompt,
-        max_output_tokens: 180
+        max_output_tokens: 120,
     });
 
-    const text = response.output_text?.trim();
+    const text = extractText(response);
 
     if (!text) {
-        throw new Error("OpenAI returned empty text");
+        console.error("Full OpenAI response:", JSON.stringify(response, null, 2));
+        throw new Error("OpenAI returned no readable text");
     }
 
     await sendTelegramMessage(text);
-    console.log("Deep idea sent");
+    console.log("Fact sent");
 }
 
 main().catch((err) => {

@@ -11,7 +11,9 @@ if (!TELEGRAM_BOT_TOKEN || !TELEGRAM_CHAT_ID || !OPENAI_API_KEY) {
     throw new Error("Missing TELEGRAM_BOT_TOKEN / TELEGRAM_CHAT_ID / OPENAI_API_KEY");
 }
 
-const openai = new OpenAI({ apiKey: OPENAI_API_KEY });
+const openai = new OpenAI({
+    apiKey: OPENAI_API_KEY,
+});
 
 async function sendTelegramMessage(text) {
     const res = await fetch(`https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage`, {
@@ -32,36 +34,57 @@ async function sendTelegramMessage(text) {
     }
 }
 
+function extractText(response) {
+    if (response.output_text && response.output_text.trim()) {
+        return response.output_text.trim();
+    }
+
+    const parts = [];
+
+    for (const item of response.output || []) {
+        if (item.type === "message") {
+            for (const content of item.content || []) {
+                if (content.type === "output_text" && content.text) {
+                    parts.push(content.text);
+                }
+            }
+        }
+    }
+
+    return parts.join("\n").trim();
+}
+
 async function main() {
     const prompt = `
-Generate one Daily Deep Idea in Russian.
+Write one "Daily Deep Idea" in Russian for Telegram.
 
 Requirements:
-- 6 to 10 short lines
-- powerful but simple
-- from philosophy, science, psychology, technology, history, or mental models
+- 5 to 7 short lines
 - include:
-  1) title
-  2) explanation
-  3) one example
-  4) one takeaway
-- no markdown bold
+  title
+  explanation
+  simple example
+  takeaway
+- simple language
 - start with 🧠
-- readable in Telegram
+- no markdown
 `.trim();
 
     const response = await openai.responses.create({
         model: OPENAI_MODEL,
         input: prompt,
+        max_output_tokens: 200,
     });
 
-    const text = response.output_text?.trim();
+    const text = extractText(response);
 
     if (!text) {
-        throw new Error("OpenAI returned empty text");
+        console.error("Full OpenAI response:", JSON.stringify(response, null, 2));
+        throw new Error("OpenAI returned no readable text");
     }
 
     await sendTelegramMessage(text);
+
     console.log("Deep idea sent");
 }
 
