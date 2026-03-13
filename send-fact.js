@@ -4,7 +4,7 @@ const {
     TELEGRAM_BOT_TOKEN,
     TELEGRAM_CHAT_ID,
     OPENAI_API_KEY,
-    OPENAI_MODEL = "gpt-5-mini",
+    OPENAI_MODEL = "gpt-5-nano",
 } = process.env;
 
 if (!TELEGRAM_BOT_TOKEN || !TELEGRAM_CHAT_ID || !OPENAI_API_KEY) {
@@ -32,61 +32,21 @@ async function sendTelegramMessage(text) {
     }
 }
 
-function randomTopic() {
-    const topics = [
-        "programming",
-        "IT",
-        "AI",
-        "computer science fundamentals",
-        "internet history",
-        "tech history",
-        "psychology",
-        "brain",
-        "philosophy",
-        "science",
-        "universe",
-        "history",
-        "culture",
-        "ancient civilizations",
-        "human evolution",
-        "probability",
-        "statistics intuition",
-        "mental models",
-        "thinking frameworks",
-        "important school knowledge",
-        "physics",
-        "math",
-        "biology",
-        "logic puzzle",
-        "paradox",
-        "programmer brain hack"
-    ];
-
-    return topics[Math.floor(Math.random() * topics.length)];
-}
-
 async function main() {
-    const topic = randomTopic();
-
     const prompt = `
-Generate exactly one concise interesting fact, insight, or mini-lesson in Armenian.
+Write 1 Daily Deep Idea in Armenian for Telegram.
 
-Topic: ${topic}
-
-Requirements:
-- 4 to 7 short lines
-- clear and easy to read in Telegram
-- accurate
-- useful for personal learning
-- no markdown bold
-- no hashtags
-- start with a fitting emoji
-- include a 1-line takeaway at the end
+Rules:
+- 5 to 7 short lines
+- simple but smart
+- include title, explanation, example, takeaway
+- start with 🧠
 `.trim();
 
     const response = await openai.responses.create({
         model: OPENAI_MODEL,
         input: prompt,
+        max_output_tokens: 180
     });
 
     const text = response.output_text?.trim();
@@ -96,7 +56,7 @@ Requirements:
     }
 
     await sendTelegramMessage(text);
-    console.log("Fact sent");
+    console.log("Deep idea sent");
 }
 
 main().catch((err) => {
