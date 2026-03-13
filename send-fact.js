@@ -34,7 +34,7 @@ async function sendTelegramMessage(text) {
 
 async function main() {
     const prompt = `
-Write 1 Daily Deep Idea in Armenian for Telegram.
+Write 1 Daily Deep Idea in Russian for Telegram.
 
 Rules:
 - 5 to 7 short lines

@@ -34,7 +34,7 @@ async function sendTelegramMessage(text) {
 
 async function main() {
     const prompt = `
-Generate one Daily Deep Idea in Armenian.
+Generate one Daily Deep Idea in Russian.
 
 Requirements:
 - 6 to 10 short lines
